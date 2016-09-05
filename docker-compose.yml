@@ -3,11 +3,26 @@ services:
   php:
     build: ./docker/php
     working_dir: /var/www/symfony
+    user: www-data
     volumes:
       - ./docker/php/php.ini:/usr/local/etc/php/php.ini
-      - ./site:/var/www/symfony
+      - ./docker/php/ext-xdebug.ini:/usr/local/etc/php/conf.d/ext-xdebug.ini
+      - ./symfony/app:/var/www/symfony/app
+      - ./symfony/bin:/var/www/symfony/bin
+      - ./symfony/src:/var/www/symfony/src
+      - ./symfony/tests:/var/www/symfony/tests
+      - ./symfony/var:/var/www/symfony/var
+      - ./symfony/web:/var/www/symfony/web
+      - ./symfony/composer.json:/var/www/symfony/composer.json
+      - ./symfony/composer.lock:/var/www/symfony/composer.lock
+      - ./symfony/phpunit.xml.dist:/var/www/symfony/phpunit.xml.dist
     depends_on:
       - postgres
+    environment:
+      XDEBUG_CONFIG: remote_host=192.168.201.15
+      PHP_IDE_CONFIG: serverName=php-docker.local
+    ports:
+      - 9000
   postgres:
     build: ./docker/postgres
     environment:
@@ -21,6 +36,6 @@ services:
     volumes:
       # - ./docker/nginx/nginx.conf:/etc/nginx/nginx.conf
       - ./docker/nginx/site.conf:/etc/nginx/conf.d/site.conf
-      - ./site/web:/var/www/symfony/web
+      - ./symfony/web:/var/www/symfony/web
     depends_on:
       - php

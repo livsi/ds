@@ -1,4 +1,5 @@
 FROM php:7.0-fpm
+
 RUN apt-get update && apt-get install -y \
         libfreetype6-dev \
         libjpeg62-turbo-dev \
@@ -19,8 +20,9 @@ RUN apt-get update && apt-get install -y \
 RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" \
     && php composer-setup.php \
     && php -r "unlink('composer-setup.php');" \
-    && mv composer.phar /usr/local/bin/composer \
-    && mkdir -p /var/www/s/cache/dev \
-    && mkdir -p /var/www/s/cache/prod \
-    && chmod 777 /var/www/s/cache/dev \
-    && chmod 777 /var/www/s/cache/prod
+    && mv composer.phar /usr/local/bin/composer
+
+WORKDIR /var/www/symfony
+
+RUN chown -R www-data:www-data /var/www
+
