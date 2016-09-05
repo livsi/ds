@@ -1,0 +1,26 @@
+version: '2'
+services:
+  php:
+    build: ./docker/php
+    working_dir: /var/www/symfony
+    volumes:
+      - ./docker/php/php.ini:/usr/local/etc/php/php.ini
+      - ./site:/var/www/symfony
+    depends_on:
+      - postgres
+  postgres:
+    build: ./docker/postgres
+    environment:
+      POSTGRES_PASSWORD: application
+      POSTGRES_USER: application
+      POSTGRES_DB: application
+  nginx:
+    build: ./docker/nginx
+    ports:
+      - 8000:80
+    volumes:
+      # - ./docker/nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./docker/nginx/site.conf:/etc/nginx/conf.d/site.conf
+      - ./site/web:/var/www/symfony/web
+    depends_on:
+      - php
